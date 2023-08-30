@@ -1,9 +1,11 @@
+using Microsoft.VisualBasic;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 class CallbackControl
 {
+    private const string Photo = "";
     private ITelegramBotClient botClient;
     private Update update;
     public ITelegramBotClient BotClient
@@ -21,18 +23,49 @@ class CallbackControl
         BotClient = botClient;
         Update = update;
     }
-    public void CallbackControler()
+    public async void CallbackControler()
     {
         try
         {
             var callbackData = Int32.Parse(update.CallbackQuery.Data);
-            if (callbackData == 1)
+            switch (callbackData)
             {
-                botClient.SendTextMessageAsync(
-                chatId: update.CallbackQuery.Message.Chat.Id,
-                text: "PLACE HOLDER MESSAGE"//TODO: Implement messages 
-               );
+                case 0:
+                    await botClient.SendTextMessageAsync(
+                    chatId: update.CallbackQuery.Message.Chat.Id,
+                    text: Answers.ReplyMessage());
+
+                    await botClient.SendPhotoAsync(
+                    chatId: update.CallbackQuery.Message.Chat.Id,
+                    caption: Answers.SendProductLinkMessage(),
+                    photo: InputFile.FromUri(Secrets.OrderImageSrc),
+                    replyMarkup: InlineKeyboard.CancelOrder());
+                    break;
+                case 1:
+                    var deleteMessageId = new List<int> {
+                        update.CallbackQuery.Message.MessageId - 2,
+                        update.CallbackQuery.Message.MessageId - 1,
+                        update.CallbackQuery.Message.MessageId,
+                    };
+                    foreach (var id in deleteMessageId)
+                    {
+                        await botClient.DeleteMessageAsync(
+                        chatId: update.CallbackQuery.Message.Chat.Id,
+                        messageId:id);
+                    }
+                    
+                    await botClient.SendTextMessageAsync(
+                    chatId: update.CallbackQuery.Message.Chat.Id,
+                    text: Answers.CancelledOrderMessage());
+
+                    await botClient.SendTextMessageAsync(
+                    chatId: update.CallbackQuery.Message.Chat.Id,
+                    text: Answers.NewOrderMessage());
+                    break;
+                default:
+                    break;
             }
+
         }
         catch (System.Exception e)
         {

@@ -10,7 +10,6 @@ class Answers
 
 Например: 233";
     }
-   
     public static string TotalPriceMessage(Currency currency, String message, List<ServicePrice> servicePrices)
     {
        return $@"Итоговая стоимость:
@@ -25,8 +24,16 @@ _______________
 Доставка в РФ: {ServicePrice.GetServicePrice("Delivery in Russia", servicePrices).price} ₽
 Комиссия сервиса: {ServicePrice.GetServicePrice("Fee", servicePrices).price} ₽";
     }
-    public static string RepeatMessage(){
+    public static string ReplyMessage(){
         return @"Нажмите на кнопку выше, если вы готовы оформить заказ, или напишите новую цену в CNY, чтобы рассчитать другой товар!";
     }
-
+    public static string SendProductLinkMessage(){
+        return @"🔗 Отправьте пожалуста ссылку на интересующий товар.";
+    }
+    public static string CancelledOrderMessage(){
+        return @"Выполнено! Оформление заказа прекращено.";
+    }
+    public static string NewOrderMessage(){
+        return @"Если Вы снова решите что-то заказать, просто отправьте мне стоимость товара, и я обязательно Вам помогу!";
+    }
 }
